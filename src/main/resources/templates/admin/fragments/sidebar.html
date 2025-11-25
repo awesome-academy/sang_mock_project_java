@@ -1,0 +1,30 @@
+<div th:fragment="sidebar_fragment" class="d-flex flex-column p-3 sidebar">
+    <h4 class="text-center py-3 border-bottom">EMS Admin</h4>
+    <ul class="nav nav-pills flex-column mb-auto mt-3">
+        <li class="nav-item">
+            <a href="/admin/dashboard" class="nav-link active">
+                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </a>
+        </li>
+        <li>
+            <a href="/admin/users" class="nav-link">
+                <i class="fas fa-users me-2"></i> User Management
+            </a>
+        </li>
+        <li>
+            <a href="/admin/categories" class="nav-link">
+                <i class="fas fa-tags me-2"></i> Categories
+            </a>
+        </li>
+        <li>
+            <a href="/admin/templates" class="nav-link">
+                <i class="fas fa-file-invoice-dollar me-2"></i> Budget Templates
+            </a>
+        </li>
+        <li>
+            <a href="/admin/logs" class="nav-link">
+                <i class="fas fa-history me-2"></i> System Logs
+            </a>
+        </li>
+    </ul>
+</div>

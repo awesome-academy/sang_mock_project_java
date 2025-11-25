@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/layout :: layout(~{::section})}">
+      
+<section>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Dashboard</h1>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card card-stat bg-primary text-white p-3">
+                <h5>Total Users</h5>
+                <h2>1,250</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-stat bg-success text-white p-3">
+                <h5>Total Expenses</h5>
+                <h2>$45,000</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-stat bg-warning text-dark p-3">
+                <h5>Active Budgets</h5>
+                <h2>320</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-stat bg-danger text-white p-3">
+                <h5>System Errors</h5>
+                <h2>5</h2>
+            </div>
+        </div>
+    </div>
+</section>
+</html>
