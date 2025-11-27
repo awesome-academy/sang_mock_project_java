@@ -61,7 +61,7 @@ public class CategoryApiController {
         categoryService.deleteCategory(id);
         
         return ResponseEntity.ok(ApiResponse.<Void>builder()
-                .status(200)
+                .status(204)
                 .message("Deleted successfully!")
                 .data(null)
                 .build());
