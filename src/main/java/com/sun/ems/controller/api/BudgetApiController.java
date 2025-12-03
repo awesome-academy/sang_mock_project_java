@@ -63,7 +63,7 @@ public class BudgetApiController {
         budgetService.deleteBudget(id);
         
         return ResponseEntity.ok(ApiResponse.<Void>builder()
-			    .status(200)
+			    .status(204)
 			    .message("Budget deleted successfully")
 			    .data(null)
 			    .build());

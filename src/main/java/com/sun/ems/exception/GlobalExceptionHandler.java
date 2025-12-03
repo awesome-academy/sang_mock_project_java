@@ -112,4 +112,24 @@ public class GlobalExceptionHandler {
         
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+    
+    @ExceptionHandler(FileStorageException.class)
+    public ResponseEntity<Map<String, Object>> handleFileStorageException(FileStorageException ex, HttpServletRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        body.put("error", "File Storage Error");
+        body.put("message", ex.getMessage());
+        body.put("path", request.getServletPath());
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(InvalidDateException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidDateException(InvalidDateException ex, HttpServletRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", "Invalid Date");
+        body.put("message", ex.getMessage());
+        body.put("path", request.getServletPath());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -21,4 +22,6 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
     boolean existsByUserIdAndCategoryIdAndPeriodAndIdNot(@Param("userId") UUID userId, @Param("categoryId") UUID categoryId, @Param("period") String period, @Param("id") UUID id);
 
     boolean existsByUserIdAndCategoryIsNullAndPeriodAndIdNot(@Param("userId") UUID userId, @Param("period") String period, @Param("id") UUID id);
+
+    List<Budget> findByUserIdAndCategoryIsNullAndPeriodIn(UUID userId, Set<String> periods);
 }
