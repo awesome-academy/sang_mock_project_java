@@ -70,6 +70,11 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
+        		.requestMatchers(
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html"
+                ).permitAll()
                 .requestMatchers("/admin/login", "/css/**", "/js/**", "/images/**", "/webjars/**", "/error").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
