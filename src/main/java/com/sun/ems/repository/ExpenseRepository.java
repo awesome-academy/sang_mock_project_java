@@ -1,5 +1,6 @@
 package com.sun.ems.repository;
 
+import com.sun.ems.dto.response.ChartData;
 import com.sun.ems.entity.Expense;
 import com.sun.ems.repository.projection.MonthlyStat;
 
@@ -34,5 +35,20 @@ public interface ExpenseRepository extends JpaRepository<Expense, UUID>, JpaSpec
             "WHERE e.user.id = :userId " +
             "AND e.expenseDate BETWEEN :startDate AND :endDate " +
             "GROUP BY YEAR(e.expenseDate), MONTH(e.expenseDate)")
-     List<MonthlyStat> findMonthlyStats(UUID userId, LocalDate startDate, LocalDate endDate);
+     List<MonthlyStat> findMonthlyStats(@Param("userId") UUID userId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    
+    @Query("SELECT new com.sun.ems.dto.response.ChartData(e.category.name, SUM(e.amount)) " +
+            "FROM Expense e " +
+            "WHERE e.user.id = :userId " +
+            "AND e.expenseDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY e.category.name")
+     List<ChartData> sumAmountGroupByCategory(@Param("userId") UUID userId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT YEAR(e.expenseDate), MONTH(e.expenseDate), SUM(e.amount) " +
+            "FROM Expense e " +
+            "WHERE e.user.id = :userId " +
+            "AND e.expenseDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY YEAR(e.expenseDate), MONTH(e.expenseDate) " +
+            "ORDER BY YEAR(e.expenseDate), MONTH(e.expenseDate)")
+    List<Object[]> sumAmountGroupByMonthRaw(@Param("userId") UUID userId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }
