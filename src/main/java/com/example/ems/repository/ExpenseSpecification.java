@@ -15,6 +15,8 @@ public class ExpenseSpecification {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            predicates.add(criteriaBuilder.equal(root.get("user").get("id"), userId));
+            
             if (req.getKeyword() != null && !req.getKeyword().isEmpty()) {
                 String escapedKeyword = escapeLikePattern(req.getKeyword().toLowerCase());
                 String likePattern = "%" + escapedKeyword + "%";

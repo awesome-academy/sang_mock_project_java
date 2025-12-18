@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/layout :: layout(~{::section})}">
+<head><title>Category Form</title></head>
+<body>
+<section>
+    <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2" th:text="${pageTitle}">Category Form</h1>
+        <a th:href="@{/admin/categories}" class="btn btn-secondary btn-sm">Back</a>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="card shadow-sm col-lg-6 mx-auto">
+        <div class="card-body">
+            <form th:action="${categoryDto.id == null} ? @{/admin/categories/save} : @{/admin/categories/update/{id}(id=${categoryDto.id})}"
+                  th:object="${categoryDto}" method="post">
+                
+                <div class="mb-3">
+                    <label class="form-label">Name <span class="text-danger">*</span></label>
+                    <input type="text" th:field="*{name}" class="form-control" 
+                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:errors="*{name}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Type <span class="text-danger">*</span></label>
+                    <select th:field="*{type}" class="form-select" th:classappend="${#fields.hasErrors('type')} ? 'is-invalid'">
+                        <option value="">Select Type</option>
+                        <option th:each="t : ${T(com.example.ems.constant.CategoryType).values()}"
+                                th:value="${t}" th:text="${t}"></option>
+                    </select>
+                    <div class="invalid-feedback" th:errors="*{type}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Icon Class (FontAwesome)</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-icons"></i></span>
+                        <input type="text" th:field="*{icon}" class="form-control" placeholder="e.g. fas fa-shopping-cart">
+                    </div>
+                    <small class="text-muted">Enter class name from FontAwesome 6.</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea th:field="*{description}" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Save Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>

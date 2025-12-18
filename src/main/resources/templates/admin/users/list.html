@@ -23,10 +23,10 @@
                    placeholder="Search name or email..." th:value="${keyword}">
         </div>
         <div class="col-md-3">
-            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
-                <option value="" th:selected="${status == null}">All Status</option>
-                <option value="true" th:selected="${status == true}">Active</option>
-                <option value="false" th:selected="${status == false}">Inactive</option>
+            <select name="isActive" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="" th:selected="${isActive == null}">All Status</option>
+                <option value="true" th:selected="${isActive == true}">Active</option>
+                <option value="false" th:selected="${isActive == false}">Inactive</option>
             </select>
         </div>
         <div class="col-md-2">
@@ -91,7 +91,7 @@
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:each="i : ${#numbers.sequence(0, users.totalPages - 1)}"
                     th:classappend="${currentPage == i} ? 'active'">
-                    <a class="page-link" th:href="@{/admin/users(page=${i}, keyword=${keyword}, status=${status})}"
+                    <a class="page-link" th:href="@{/admin/users(page=${i}, keyword=${keyword}, isActive=${isActive})}"
                        th:text="${i + 1}">1</a>
                 </li>
             </ul>
