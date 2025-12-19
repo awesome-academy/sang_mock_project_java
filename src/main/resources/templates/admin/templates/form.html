@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/layout :: layout(~{::section})}">
+	<head><title>Template Form</title></head>
+	<body>
+		<section>
+		    <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+		        <h1 class="h2" th:text="${pageTitle}">Template Form</h1>
+		        <a th:href="@{/admin/templates}" class="btn btn-secondary btn-sm">Back</a>
+		    </div>
+		
+		    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+		
+		    <div class="card shadow-sm col-lg-8 mx-auto">
+		        <div class="card-body">
+		            <form th:action="${templateDto.id == null} ? @{/admin/templates/save} : @{/admin/templates/update/{id}(id=${templateDto.id})}"
+		                  th:object="${templateDto}" method="post">
+		                
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <label class="form-label">Template Name <span class="text-danger">*</span></label>
+		                        <input type="text" th:field="*{name}" class="form-control" 
+		                               th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'">
+		                        <div class="invalid-feedback" th:errors="*{name}"></div>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                         <label class="form-label">Period (Month)</label>
+		                        <input type="month" th:field="*{period}" class="form-control"
+		                               th:classappend="${#fields.hasErrors('period')} ? 'is-invalid'">
+		                        <div class="invalid-feedback" th:errors="*{period}"></div>
+		                    </div>
+		                </div>
+		
+		                <div class="mb-3">
+		                    <label class="form-label">Default Amount ($) <span class="text-danger">*</span></label>
+		                    <input type="number" step="0.01" th:field="*{defaultAmount}" class="form-control"
+		                           th:classappend="${#fields.hasErrors('defaultAmount')} ? 'is-invalid'">
+		                    <div class="invalid-feedback" th:errors="*{defaultAmount}"></div>
+		                </div>
+		
+		                <div class="mb-3">
+		                    <label class="form-label">Default Categories & Amounts (Description)</label>
+		                    <textarea th:field="*{defaultCategories}" class="form-control" rows="5" 
+		                              placeholder="Example: &#10;Food: 200 &#10;Transport: 100"></textarea>
+		                    <small class="text-muted">Enter details about categories included in this template.</small>
+		                </div>
+		
+		                <div class="d-grid gap-2">
+		                    <button type="submit" class="btn btn-primary">Save Template</button>
+		                </div>
+		            </form>
+		        </div>
+		    </div>
+		</section>
+	</body>
+</html>
