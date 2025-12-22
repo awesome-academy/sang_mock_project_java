@@ -1,5 +1,8 @@
 package com.example.ems.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -51,4 +54,18 @@ public interface ExpenseRepository extends JpaRepository<Expense, UUID>, JpaSpec
             "GROUP BY YEAR(e.expenseDate), MONTH(e.expenseDate) " +
             "ORDER BY YEAR(e.expenseDate), MONTH(e.expenseDate)")
     List<Object[]> sumAmountGroupByMonthRaw(@Param("userId") UUID userId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    
+    @EntityGraph(attributePaths = {"user", "category"})
+    @Query("SELECT e FROM Expense e " +
+            "WHERE (:userId IS NULL OR e.user.id = :userId) " +
+            "AND (:categoryId IS NULL OR e.category.id = :categoryId) " +
+            "AND (:startDate IS NULL OR e.expenseDate >= :startDate) " +
+            "AND (:endDate IS NULL OR e.expenseDate <= :endDate) " +
+            "AND (:keyword IS NULL OR :keyword = '' OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    Page<Expense> searchExpenses(@Param("userId") UUID userId,
+            @Param("categoryId") UUID categoryId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("keyword") String keyword,
+            Pageable pageable);
 }

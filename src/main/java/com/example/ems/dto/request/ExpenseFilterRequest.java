@@ -20,6 +20,7 @@ public class ExpenseFilterRequest {
     private Integer size;
     
     private String keyword;
+    private UUID userId;
     private UUID categoryId;
     
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
