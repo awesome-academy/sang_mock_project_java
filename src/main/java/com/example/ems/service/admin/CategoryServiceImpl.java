@@ -1,6 +1,9 @@
 package com.example.ems.service.admin;
 
+import com.example.ems.annotation.LogActivity;
 import com.example.ems.constant.CategoryType;
+import com.example.ems.constant.EntityType;
+import com.example.ems.constant.LogAction;
 import com.example.ems.dto.request.CategoryDto;
 import com.example.ems.entity.Category;
 import com.example.ems.exception.ResourceNotFoundException;
@@ -34,6 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @LogActivity(action = LogAction.CREATE, entityType = EntityType.CATEGORY, entityClass = Category.class)
     public void saveCategory(CategoryDto dto) {
         if (categoryRepository.existsByNameGlobal(dto.getName(), null)) {
             throw new IllegalArgumentException("Category name already exists");
@@ -48,6 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @LogActivity(action = LogAction.UPDATE, entityType = EntityType.CATEGORY, entityClass = Category.class)
     public void updateCategory(UUID id, CategoryDto dto) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
@@ -62,6 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @LogActivity(action = LogAction.DELETE, entityType = EntityType.CATEGORY, entityClass = Category.class)
     public void deleteCategory(UUID id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));

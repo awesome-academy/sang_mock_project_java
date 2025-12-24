@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.example.ems.annotation.LogActivity;
+import com.example.ems.constant.EntityType;
+import com.example.ems.constant.LogAction;
 import com.example.ems.dto.request.UserDto;
 import com.example.ems.entity.Role;
 import com.example.ems.entity.User;
@@ -45,6 +48,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @LogActivity(action = LogAction.CREATE, entityType = EntityType.USER, entityClass = User.class)
     public void saveUser(UserDto dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new EmailAlreadyExistsException("Email already exists: " + dto.getEmail());
@@ -60,6 +64,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @LogActivity(action = LogAction.UPDATE, entityType = EntityType.USER, entityClass = User.class)
     public void updateUser(UUID id, UserDto dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));

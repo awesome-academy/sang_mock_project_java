@@ -6,7 +6,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.ems.annotation.LogActivity;
 import com.example.ems.constant.CategoryType;
+import com.example.ems.constant.EntityType;
+import com.example.ems.constant.LogAction;
 import com.example.ems.dto.request.CategoryRequest;
 import com.example.ems.dto.response.CategoryResponse;
 import com.example.ems.entity.Category;
@@ -42,6 +45,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @LogActivity(action = LogAction.CREATE, entityType = EntityType.CATEGORY, entityClass = Category.class)
     public CategoryResponse createCategory(CategoryRequest request) {
         User currentUser = getCurrentUser();
 
@@ -59,6 +63,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @LogActivity(action = LogAction.UPDATE, entityType = EntityType.CATEGORY, entityClass = Category.class)
     public CategoryResponse updateCategory(UUID id, CategoryRequest request) {
         User currentUser = getCurrentUser();
         Category category = getCategoryIfOwnedByUser(id, currentUser);
@@ -73,6 +78,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @LogActivity(action = LogAction.DELETE, entityType = EntityType.CATEGORY, entityClass = Category.class)
     public void deleteCategory(UUID id) {
         User currentUser = getCurrentUser();
         Category category = getCategoryIfOwnedByUser(id, currentUser);
