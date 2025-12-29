@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/layout :: layout(~{::section})}">
+<head><title>Import/Export Logs</title></head>
+<body>
+<section>
+    <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">File Processing Logs</h1>
+        <a th:href="@{/admin/users}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> Back to Users
+        </a>
+    </div>
+
+    <meta http-equiv="refresh" content="30"> 
+    <div class="alert alert-info py-2 small">
+        <i class="fas fa-sync fa-spin me-1"></i> Page auto-refreshes every 30 seconds to update status.
+    </div>
+	<div class="card shadow-sm mb-4">
+	    <div class="card-body">
+	        <form th:action="@{/admin/import-logs}" th:object="${filter}" method="get" class="row g-3">
+	            <div class="col-md-3">
+	                <label class="form-label small fw-bold">From Date</label>
+	                <input type="date" class="form-control form-control-sm" th:field="*{startDate}">
+	            </div>
+	
+	            <div class="col-md-3">
+	                <label class="form-label small fw-bold">To Date</label>
+	                <input type="date" class="form-control form-control-sm" th:field="*{endDate}">
+	            </div>
+	
+	            <div class="col-md-2">
+	                <label class="form-label small fw-bold">Status</label>
+	                <select class="form-select form-select-sm" th:field="*{status}">
+	                    <option value="">All Status</option>
+	                    <option th:each="s : ${T(com.example.ems.constant.JobStatus).values()}"
+	                            th:value="${s}" th:text="${s}"></option>
+	                </select>
+	            </div>
+	
+	            <div class="col-md-2">
+	                <label class="form-label small fw-bold">Type</label>
+	                <select class="form-select form-select-sm" th:field="*{type}">
+	                    <option value="">All Types</option>
+	                    <option th:each="a : ${T(com.example.ems.constant.LogAction).values()}"
+	                            th:if="${a.name() == 'IMPORT' or a.name() == 'EXPORT'}"
+	                            th:value="${a}" th:text="${a}"></option>
+	                </select>
+	            </div>
+	
+	            <div class="col-md-2 d-flex align-items-end">
+	                <button type="submit" class="btn btn-primary btn-sm w-100">
+	                    <i class="fas fa-filter me-1"></i> Filter
+	                </button>
+	            </div>
+	        </form>
+	    </div>
+	</div>
+    <div class="table-responsive bg-white shadow-sm rounded">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+            <tr>
+                <th>Time</th>
+                <th>Action</th>
+                <th>File Name</th>
+                <th>Status</th>
+                <th>Message / Result</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="log : ${logs.content}">
+                <td th:text="${#temporals.format(log.createdAt, 'dd/MM/yyyy HH:mm:ss')}" class="text-nowrap small"></td>
+                <td>
+                    <span th:if="${log.action.name() == 'IMPORT'}" class="badge bg-warning text-dark">IMPORT</span>
+                    <span th:if="${log.action.name() == 'EXPORT'}" class="badge bg-success">EXPORT</span>
+                </td>
+                <td th:text="${log.fileName}" class="small font-monospace"></td>
+                <td>
+                    <span th:if="${log.status.name() == 'PENDING'}" class="badge bg-secondary">Pending</span>
+                    <span th:if="${log.status.name() == 'IN_PROGRESS'}" class="badge bg-primary">
+                        <span class="spinner-border spinner-border-sm" style="width: 0.7rem; height: 0.7rem;"></span> Running
+                    </span>
+                    <span th:if="${log.status.name() == 'SUCCESS'}" class="badge bg-success">Success</span>
+                    <span th:if="${log.status.name() == 'FAILED'}" class="badge bg-danger">Failed</span>
+                </td>
+                <td>
+                    <div class="small text-muted" 
+                         style="max-height: 80px; overflow-y: auto; white-space: pre-wrap;"
+                         th:text="${log.message}"></div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+	<div class="mt-3 d-flex justify-content-center" th:if="${logs.totalPages > 1}">
+        <nav>
+            <ul class="pagination pagination-sm">
+                <li class="page-item" th:classappend="${logs.first} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/import-logs(page=${logs.number - 1}, startDate=${filter.startDate}, endDate=${filter.endDate}, status=${filter.status}, type=${filter.type})}">Previous</a>
+                </li>
+                
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, logs.totalPages - 1)}"
+                    th:classappend="${i == logs.number} ? 'active'">
+                    <a class="page-link" 
+                       th:href="@{/admin/import-logs(page=${i}, startDate=${filter.startDate}, endDate=${filter.endDate}, status=${filter.status}, type=${filter.type})}"
+                       th:text="${i + 1}"></a>
+                </li>
+                
+                <li class="page-item" th:classappend="${logs.last} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/import-logs(page=${logs.number + 1}, startDate=${filter.startDate}, endDate=${filter.endDate}, status=${filter.status}, type=${filter.type})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</section>
+</body>
+</html>
