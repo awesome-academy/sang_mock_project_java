@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/layout :: layout(~{::section})}">
+<head><title>Income Form</title></head>
+<body>
+<section>
+    <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2" th:text="${pageTitle}">Income Form</h1>
+        <a th:href="@{/admin/incomes}" class="btn btn-secondary btn-sm">Back</a>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="card shadow-sm col-lg-8 mx-auto">
+        <div class="card-body">
+            <form th:action="${incomeDto.id == null} ? @{/admin/incomes/save} : @{/admin/incomes/update/{id}(id=${incomeDto.id})}"
+                  th:object="${incomeDto}" method="post">
+                
+                <div class="mb-3">
+                    <label class="form-label">Title <span class="text-danger">*</span></label>
+                    <input type="text" th:field="*{title}" class="form-control" 
+                           th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:errors="*{title}"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">User <span class="text-danger">*</span></label>
+                        <select th:field="*{userId}" class="form-select" th:classappend="${#fields.hasErrors('userId')} ? 'is-invalid'">
+                            <option value="">-- Select User --</option>
+                            <option th:each="u : ${users}" th:value="${u.id}" th:text="${u.name}"></option>
+                        </select>
+                        <div class="invalid-feedback" th:errors="*{userId}"></div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Category <span class="text-danger">*</span></label>
+                        <select th:field="*{categoryId}" class="form-select" th:classappend="${#fields.hasErrors('categoryId')} ? 'is-invalid'">
+                            <option value="">-- Select Category --</option>
+                            <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
+                        </select>
+                        <div class="invalid-feedback" th:errors="*{categoryId}"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Amount ($) <span class="text-danger">*</span></label>
+                        <input type="number" step="0.01" th:field="*{amount}" class="form-control"
+                               th:classappend="${#fields.hasErrors('amount')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{amount}"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Income Date <span class="text-danger">*</span></label>
+                        <input type="date" th:field="*{incomeDate}" class="form-control"
+                               th:classappend="${#fields.hasErrors('incomeDate')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{incomeDate}"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Note</label>
+                    <textarea th:field="*{note}" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-success">Save Income</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>
