@@ -11,11 +11,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.ems.annotation.LogActivity;
 import com.example.ems.constant.CategoryType;
+import com.example.ems.constant.EntityType;
+import com.example.ems.constant.LogAction;
 import com.example.ems.dto.request.ExpenseFilterRequest;
 import com.example.ems.dto.request.ExpenseRequest;
 import com.example.ems.dto.response.ExpenseDetailResponse;
-import com.example.ems.dto.response.ExpenseListResponse;
 import com.example.ems.dto.response.ExpenseResponse;
 import com.example.ems.dto.response.PageResponse;
 import com.example.ems.entity.Attachment;
@@ -41,7 +43,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -160,6 +161,7 @@ public class ExpenseService {
     }
 
     @Transactional
+    @LogActivity(action = LogAction.CREATE, entityType = EntityType.EXPENSE, entityClass = Expense.class)
     public ExpenseResponse createExpense(ExpenseRequest request) {
         User user = getCurrentUser();
 
@@ -189,6 +191,7 @@ public class ExpenseService {
     }
 
     @Transactional
+    @LogActivity(action = LogAction.UPDATE, entityType = EntityType.EXPENSE, entityClass = Expense.class)
     public ExpenseResponse updateExpense(UUID id, ExpenseRequest request) {
         User user = getCurrentUser();
 
@@ -293,6 +296,7 @@ public class ExpenseService {
     
     // 3. Delete Expense
     @Transactional
+    @LogActivity(action = LogAction.DELETE, entityType = EntityType.EXPENSE, entityClass = Expense.class)
     public void deleteExpense(UUID id) {
         User user = getCurrentUser();
         Expense expense = expenseRepository.findById(id)

@@ -1,5 +1,8 @@
 package com.example.ems.service.admin;
 
+import com.example.ems.annotation.LogActivity;
+import com.example.ems.constant.EntityType;
+import com.example.ems.constant.LogAction;
 import com.example.ems.dto.request.BudgetTemplateDto;
 import com.example.ems.entity.BudgetTemplate;
 import com.example.ems.exception.ResourceNotFoundException;
@@ -33,6 +36,7 @@ public class BudgetTemplateServiceImpl implements BudgetTemplateService {
 
     @Override
     @Transactional
+    @LogActivity(action = LogAction.CREATE, entityType = EntityType.TEMPLATE, entityClass = BudgetTemplate.class)
     public void saveTemplate(BudgetTemplateDto dto) {
         if (templateRepository.existsByNameIgnoreCase(dto.getName())) {
             throw new IllegalArgumentException("Template name already exists");
@@ -44,6 +48,7 @@ public class BudgetTemplateServiceImpl implements BudgetTemplateService {
 
     @Override
     @Transactional
+    @LogActivity(action = LogAction.UPDATE, entityType = EntityType.TEMPLATE, entityClass = BudgetTemplate.class)
     public void updateTemplate(UUID id, BudgetTemplateDto dto) {
         BudgetTemplate template = templateRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Template not found"));
@@ -63,6 +68,7 @@ public class BudgetTemplateServiceImpl implements BudgetTemplateService {
 
     @Override
     @Transactional
+    @LogActivity(action = LogAction.DELETE, entityType = EntityType.TEMPLATE, entityClass = BudgetTemplate.class)
     public void deleteTemplate(UUID id) {
     	BudgetTemplate template = templateRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Template not found"));

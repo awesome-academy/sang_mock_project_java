@@ -6,6 +6,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.ems.annotation.LogActivity;
+import com.example.ems.constant.EntityType;
+import com.example.ems.constant.LogAction;
 import com.example.ems.dto.request.BudgetRequest;
 import com.example.ems.dto.response.BudgetResponse;
 import com.example.ems.entity.Budget;
@@ -50,6 +53,7 @@ public class BudgetService {
     }
 
     @Transactional
+    @LogActivity(action = LogAction.CREATE, entityType = EntityType.BUDGET, entityClass = Budget.class)
     public BudgetResponse createBudget(BudgetRequest request) {
         User user = getCurrentUser();
         Category category = null;
@@ -78,6 +82,7 @@ public class BudgetService {
     }
 
     @Transactional
+    @LogActivity(action = LogAction.UPDATE, entityType = EntityType.BUDGET, entityClass = Budget.class)
     public BudgetResponse updateBudget(UUID id, BudgetRequest request) {
         User user = getCurrentUser();
         Budget budget = budgetRepository.findById(id)
@@ -124,6 +129,7 @@ public class BudgetService {
     }
 
     @Transactional
+    @LogActivity(action = LogAction.DELETE, entityType = EntityType.BUDGET, entityClass = Budget.class)
     public void deleteBudget(UUID id) {
         User user = getCurrentUser();
         Budget budget = budgetRepository.findById(id)

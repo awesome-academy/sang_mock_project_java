@@ -9,6 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.ems.constant.EntityType;
+import com.example.ems.constant.LogAction;
 import com.example.ems.constant.RoleType;
 import com.example.ems.dto.request.LoginRequest;
 import com.example.ems.dto.request.RegisterRequest;
@@ -21,6 +23,7 @@ import com.example.ems.repository.RoleRepository;
 import com.example.ems.repository.UserRepository;
 import com.example.ems.security.jwt.JwtUtils;
 import com.example.ems.security.service.CustomUserDetails;
+import com.example.ems.service.ActivityLogService;
 
 import java.util.Set;
 
@@ -33,6 +36,7 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
+    private final ActivityLogService activityLogService;
 
     public JwtResponse login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
@@ -48,6 +52,13 @@ public class AuthService {
                 .map(item -> item.getAuthority())
                 .orElse("ROLE_NONE");
 
+        activityLogService.recordActivity(
+                LogAction.LOGIN,
+                EntityType.USER,
+                userDetails.getUser().getId(),
+                "User logged in via API"
+        );
+        
         return JwtResponse.builder()
                 .token(jwt)
                 .type("Bearer")
@@ -76,5 +87,12 @@ public class AuthService {
         user.setRoles(Set.of(userRole));
 
         userRepository.save(user);
+        
+        activityLogService.recordActivity(
+                LogAction.CREATE,
+                EntityType.USER,
+                user.getId(),
+                "New user registered via API: " + user.getEmail()
+        );
     }
 }

@@ -9,7 +9,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.ems.annotation.LogActivity;
 import com.example.ems.constant.CategoryType;
+import com.example.ems.constant.EntityType;
+import com.example.ems.constant.LogAction;
 import com.example.ems.dto.request.IncomeFilterRequest;
 import com.example.ems.dto.request.IncomeRequest;
 import com.example.ems.dto.response.IncomeResponse;
@@ -71,6 +74,7 @@ public class IncomeService {
 
     // 2. Create Income
     @Transactional
+    @LogActivity(action = LogAction.CREATE, entityType = EntityType.INCOME, entityClass = Income.class)
     public IncomeResponse createIncome(IncomeRequest request) {
         User user = getCurrentUser();
 
@@ -94,6 +98,7 @@ public class IncomeService {
 
     // 3. Update Income
     @Transactional
+    @LogActivity(action = LogAction.UPDATE, entityType = EntityType.INCOME, entityClass = Income.class)
     public IncomeResponse updateIncome(UUID id, IncomeRequest request) {
         User user = getCurrentUser();
 
@@ -122,6 +127,7 @@ public class IncomeService {
 
     // 4. Delete Income
     @Transactional
+    @LogActivity(action = LogAction.DELETE, entityType = EntityType.INCOME, entityClass = Income.class)
     public void deleteIncome(UUID id) {
         User user = getCurrentUser();
         Income income = incomeRepository.findById(id)
