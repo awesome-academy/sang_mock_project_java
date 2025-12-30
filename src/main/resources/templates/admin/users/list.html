@@ -6,9 +6,20 @@
 <section>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">User Management</h1>
-        <a th:href="@{/admin/users/create}" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus"></i> Create New
-        </a>
+		<div>
+			<a th:href="@{/admin/users/export(keyword=${keyword}, isActive=${isActive})}" 
+			   class="btn btn-success btn-sm me-2">
+			    <i class="fas fa-file-csv me-1"></i> Export CSV
+			</a>
+            
+            <button type="button" class="btn btn-warning btn-sm me-2" data-bs-toggle="modal" data-bs-target="#importModal">
+                <i class="fas fa-file-upload me-1"></i> Import CSV
+            </button>
+
+            <a th:href="@{/admin/users/create}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus me-1"></i> Create New
+            </a>
+        </div>
     </div>
 
     <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -97,6 +108,33 @@
             </ul>
         </nav>
     </div>
+	<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+	        <div class="modal-dialog">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <h5 class="modal-title" id="importModalLabel">Import Users from CSV</h5>
+	                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	                </div>
+	                <form th:action="@{/admin/users/import}" method="post" enctype="multipart/form-data">
+	                    <div class="modal-body">
+	                        <div class="mb-3">
+	                            <label for="csvFile" class="form-label">Select CSV File</label>
+	                            <input class="form-control" type="file" id="csvFile" name="file" accept=".csv" required>
+	                            <div class="form-text text-muted">
+	                                Note: The first row must contain headers: <code>Full Name, Email Address, Role, Active</code>.
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="modal-footer">
+	                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+	                        <button type="submit" class="btn btn-warning">
+	                            <i class="fas fa-upload me-1"></i> Upload & Import
+	                        </button>
+	                    </div>
+	                </form>
+	            </div>
+	        </div>
+	    </div>
 </section>
 </body>
 </html>

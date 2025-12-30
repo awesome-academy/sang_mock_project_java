@@ -1,5 +1,8 @@
 package com.example.ems.constant;
 
 public enum JobStatus {
-    SUCCESS, FAILED
+    PENDING,
+    IN_PROGRESS,
+    SUCCESS,
+    FAILED
 }
