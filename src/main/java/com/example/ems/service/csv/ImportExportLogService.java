@@ -88,6 +88,7 @@ public class ImportExportLogService {
                 endDateTime,
                 filter.getStatus(),
                 filter.getType(),
+                filter.getTargetType(),
                 pageable
         );
     }

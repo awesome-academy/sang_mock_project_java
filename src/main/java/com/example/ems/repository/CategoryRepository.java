@@ -4,15 +4,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.ems.constant.CategoryType;
 import com.example.ems.entity.Category;
 
+import jakarta.persistence.QueryHint;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static org.hibernate.jpa.HibernateHints.HINT_FETCH_SIZE;
+import static org.hibernate.jpa.HibernateHints.HINT_READ_ONLY;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
@@ -34,4 +42,20 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
             "AND LOWER(c.name) = LOWER(:name) " +
             "AND (:excludeId IS NULL OR c.id != :excludeId)")
      boolean existsByNameGlobal(@Param("name") String name, @Param("excludeId") UUID excludeId);
+     
+     @Query("SELECT c.name FROM Category c WHERE c.user IS NULL AND c.isDeleted = false AND LOWER(c.name) IN :names")
+     Set<String> findExistingGlobalNames(@Param("names") Set<String> names);
+
+     // [EXPORT] Stream Global Categories
+     @QueryHints(value = {
+             @QueryHint(name = HINT_FETCH_SIZE, value = "50"),
+             @QueryHint(name = HINT_READ_ONLY, value = "true")
+     })
+     @Query("SELECT c FROM Category c WHERE " +
+             "c.user IS NULL " +
+             "AND c.isDeleted = false " +
+             "AND (:keyword IS NULL OR :keyword = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+             "AND (:type IS NULL OR c.type = :type)")
+     Stream<Category> streamGlobalCategories(@Param("keyword") String keyword, 
+                                             @Param("type") CategoryType type);
 }

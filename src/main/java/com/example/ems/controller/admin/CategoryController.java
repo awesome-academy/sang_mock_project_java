@@ -1,10 +1,19 @@
 package com.example.ems.controller.admin;
 
 import com.example.ems.constant.CategoryType;
+import com.example.ems.constant.EntityType;
+import com.example.ems.constant.LogAction;
 import com.example.ems.dto.request.CategoryDto;
 import com.example.ems.service.admin.CategoryService;
+import com.example.ems.service.csv.CategoryImportAsyncService;
+import com.example.ems.service.csv.ImportExportLogService;
+import com.example.ems.service.csv.CategoryCsvServiceImpl;
+
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,16 +22,25 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin/categories")
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final CategoryCsvServiceImpl categoryCsvService;
+    private final CategoryImportAsyncService categoryImportService;
+    private final ImportExportLogService logService;
+
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
     @GetMapping
     public String listCategories(Model model,
@@ -119,5 +137,47 @@ public class CategoryController {
             ra.addFlashAttribute("error", "Error deleting category.");
         }
         return "redirect:/admin/categories";
+    }
+    
+    @GetMapping("/export")
+    public void exportCategories(HttpServletResponse response,
+                                 @RequestParam(required = false) String keyword,
+                                 @RequestParam(required = false) CategoryType type) {
+        categoryCsvService.exportGlobalCategories(response, keyword, type);
+    }
+    
+    @PostMapping("/import")
+    public String importCategories(@RequestParam("file") MultipartFile file, RedirectAttributes ra) {
+        String fileName = file.getOriginalFilename();
+
+        if (file.isEmpty() || fileName == null || !fileName.toLowerCase().endsWith(".csv")) {
+            ra.addFlashAttribute("error", "Invalid file format. Please upload a .csv file.");
+            return "redirect:/admin/categories";
+        }
+
+        if (file.getSize() > MAX_FILE_SIZE) {
+            ra.addFlashAttribute("error", "File is too large. Maximum allowed size is 5MB.");
+            return "redirect:/admin/categories";
+        }
+
+        try {
+            UUID logId = logService.startLog(LogAction.IMPORT, EntityType.CATEGORY, fileName);
+
+            File tempFile = File.createTempFile("category_import_" + logId + "_", ".csv");
+            file.transferTo(tempFile);
+
+            categoryImportService.processImport(logId, tempFile);
+
+            ra.addFlashAttribute("message", "Import process started in background. Please check logs below.");
+            return "redirect:/admin/import-logs";
+
+        } catch (IOException e) {
+            log.error("File upload failed", e); 
+            ra.addFlashAttribute("error", "Error uploading file: " + e.getMessage());
+            return "redirect:/admin/categories";
+        } catch (IllegalStateException e) {
+             ra.addFlashAttribute("error", e.getMessage());
+             return "redirect:/admin/auth/login";
+        }
     }
 }
