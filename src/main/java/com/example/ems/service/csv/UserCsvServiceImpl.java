@@ -3,16 +3,12 @@ package com.example.ems.service.csv;
 import com.example.ems.constant.EntityType;
 import com.example.ems.constant.LogAction;
 import com.example.ems.dto.csv.UserCsvDto;
-import com.example.ems.entity.Role;
 import com.example.ems.entity.User;
-import com.example.ems.repository.RoleRepository;
 import com.example.ems.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.*;

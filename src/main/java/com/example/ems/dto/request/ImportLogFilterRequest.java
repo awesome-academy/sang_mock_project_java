@@ -1,5 +1,6 @@
 package com.example.ems.dto.request;
 
+import com.example.ems.constant.EntityType;
 import com.example.ems.constant.JobStatus;
 import com.example.ems.constant.LogAction;
 import lombok.Data;
@@ -20,4 +21,5 @@ public class ImportLogFilterRequest {
 
     private JobStatus status;
     private LogAction type;
+    private EntityType targetType;
 }
